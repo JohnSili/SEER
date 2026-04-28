@@ -1,0 +1,378 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--This does not replace URDF, and is not an extension of URDF.
+    This is a format for representing semantic information about the robot structure.
+    A URDF file must exist for this robot as well, where the joints and the links that are referenced are defined
+-->
+<robot name="wheeled_humanoid_v3_2">
+    <!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->
+    <disable_collisions link1="arm1_1_link" link2="arm1_2_link" reason="Adjacent"/>
+    <disable_collisions link1="arm1_1_link" link2="arm1_3_link" reason="Never"/>
+    <disable_collisions link1="arm1_1_link" link2="arm1_4_link" reason="Never"/>
+    <disable_collisions link1="arm1_1_link" link2="arm1_5_link" reason="Never"/>
+    <disable_collisions link1="arm1_1_link" link2="arm1_6_link" reason="Never"/>
+    <disable_collisions link1="arm1_1_link" link2="arm1_7_link" reason="Never"/>
+    <disable_collisions link1="arm1_1_link" link2="arm1_base_link" reason="Adjacent"/>
+    <disable_collisions link1="arm1_1_link" link2="arm2_1_link" reason="Never"/>
+    <disable_collisions link1="arm1_1_link" link2="arm2_2_link" reason="Never"/>
+    <disable_collisions link1="arm1_1_link" link2="arm2_3_link" reason="Never"/>
+    <disable_collisions link1="arm1_1_link" link2="arm2_4_link" reason="Never"/>
+    <disable_collisions link1="arm1_1_link" link2="arm2_base_link" reason="Never"/>
+    <disable_collisions link1="arm1_1_link" link2="base_link" reason="Default"/>
+    <disable_collisions link1="arm1_1_link" link2="camera1_link" reason="Never"/>
+    <disable_collisions link1="arm1_1_link" link2="head1_base_link" reason="Never"/>
+    <disable_collisions link1="arm1_1_link" link2="head1_pitch_link" reason="Never"/>
+    <disable_collisions link1="arm1_1_link" link2="head1_yaw_link" reason="Never"/>
+    <disable_collisions link1="arm1_1_link" link2="head_laser" reason="Never"/>
+    <disable_collisions link1="arm1_1_link" link2="lidar1_link" reason="Never"/>
+    <disable_collisions link1="arm1_1_link" link2="lidar2_link" reason="Never"/>
+    <disable_collisions link1="arm1_1_link" link2="lift1_link" reason="Never"/>
+    <disable_collisions link1="arm1_1_link" link2="steer1_link" reason="Never"/>
+    <disable_collisions link1="arm1_1_link" link2="steer2_link" reason="Never"/>
+    <disable_collisions link1="arm1_1_link" link2="steer3_link" reason="Never"/>
+    <disable_collisions link1="arm1_1_link" link2="waist1_link" reason="Default"/>
+    <disable_collisions link1="arm1_1_link" link2="walk1_link" reason="Never"/>
+    <disable_collisions link1="arm1_1_link" link2="walk2_link" reason="Never"/>
+    <disable_collisions link1="arm1_1_link" link2="walk3_link" reason="Never"/>
+    <disable_collisions link1="arm1_2_link" link2="arm1_3_link" reason="Adjacent"/>
+    <disable_collisions link1="arm1_2_link" link2="arm1_4_link" reason="Never"/>
+    <disable_collisions link1="arm1_2_link" link2="arm1_6_link" reason="Never"/>
+    <disable_collisions link1="arm1_2_link" link2="arm1_7_link" reason="Never"/>
+    <disable_collisions link1="arm1_2_link" link2="arm2_1_link" reason="Never"/>
+    <disable_collisions link1="arm1_2_link" link2="arm2_2_link" reason="Never"/>
+    <disable_collisions link1="arm1_2_link" link2="arm2_3_link" reason="Never"/>
+    <disable_collisions link1="arm1_2_link" link2="arm2_4_link" reason="Never"/>
+    <disable_collisions link1="arm1_2_link" link2="arm2_base_link" reason="Never"/>
+    <disable_collisions link1="arm1_2_link" link2="base_link" reason="Default"/>
+    <disable_collisions link1="arm1_2_link" link2="head1_base_link" reason="Never"/>
+    <disable_collisions link1="arm1_2_link" link2="head1_pitch_link" reason="Never"/>
+    <disable_collisions link1="arm1_2_link" link2="head1_yaw_link" reason="Never"/>
+    <disable_collisions link1="arm1_2_link" link2="head_laser" reason="Never"/>
+    <disable_collisions link1="arm1_2_link" link2="lidar1_link" reason="Never"/>
+    <disable_collisions link1="arm1_2_link" link2="lidar2_link" reason="Never"/>
+    <disable_collisions link1="arm1_2_link" link2="lift1_link" reason="Never"/>
+    <disable_collisions link1="arm1_2_link" link2="steer1_link" reason="Never"/>
+    <disable_collisions link1="arm1_2_link" link2="steer2_link" reason="Never"/>
+    <disable_collisions link1="arm1_2_link" link2="steer3_link" reason="Never"/>
+    <disable_collisions link1="arm1_2_link" link2="walk1_link" reason="Never"/>
+    <disable_collisions link1="arm1_2_link" link2="walk2_link" reason="Never"/>
+    <disable_collisions link1="arm1_2_link" link2="walk3_link" reason="Never"/>
+    <disable_collisions link1="arm1_3_link" link2="arm1_4_link" reason="Adjacent"/>
+    <disable_collisions link1="arm1_3_link" link2="arm1_6_link" reason="Never"/>
+    <disable_collisions link1="arm1_3_link" link2="arm1_7_link" reason="Never"/>
+    <disable_collisions link1="arm1_3_link" link2="arm1_base_link" reason="Never"/>
+    <disable_collisions link1="arm1_3_link" link2="arm2_1_link" reason="Never"/>
+    <disable_collisions link1="arm1_3_link" link2="arm2_2_link" reason="Never"/>
+    <disable_collisions link1="arm1_3_link" link2="arm2_3_link" reason="Never"/>
+    <disable_collisions link1="arm1_3_link" link2="arm2_4_link" reason="Never"/>
+    <disable_collisions link1="arm1_3_link" link2="arm2_base_link" reason="Never"/>
+    <disable_collisions link1="arm1_3_link" link2="head1_base_link" reason="Never"/>
+    <disable_collisions link1="arm1_3_link" link2="head1_yaw_link" reason="Never"/>
+    <disable_collisions link1="arm1_3_link" link2="lidar1_link" reason="Never"/>
+    <disable_collisions link1="arm1_3_link" link2="lidar2_link" reason="Never"/>
+    <disable_collisions link1="arm1_3_link" link2="steer1_link" reason="Never"/>
+    <disable_collisions link1="arm1_3_link" link2="steer2_link" reason="Never"/>
+    <disable_collisions link1="arm1_3_link" link2="steer3_link" reason="Never"/>
+    <disable_collisions link1="arm1_3_link" link2="walk1_link" reason="Never"/>
+    <disable_collisions link1="arm1_3_link" link2="walk2_link" reason="Never"/>
+    <disable_collisions link1="arm1_3_link" link2="walk3_link" reason="Never"/>
+    <disable_collisions link1="arm1_4_link" link2="arm1_5_link" reason="Adjacent"/>
+    <disable_collisions link1="arm1_4_link" link2="arm1_6_link" reason="Never"/>
+    <disable_collisions link1="arm1_4_link" link2="arm1_7_link" reason="Never"/>
+    <disable_collisions link1="arm1_4_link" link2="arm1_base_link" reason="Never"/>
+    <disable_collisions link1="arm1_4_link" link2="arm2_1_link" reason="Never"/>
+    <disable_collisions link1="arm1_4_link" link2="arm2_2_link" reason="Never"/>
+    <disable_collisions link1="arm1_4_link" link2="arm2_3_link" reason="Never"/>
+    <disable_collisions link1="arm1_4_link" link2="arm2_4_link" reason="Never"/>
+    <disable_collisions link1="arm1_4_link" link2="arm2_base_link" reason="Never"/>
+    <disable_collisions link1="arm1_4_link" link2="head1_base_link" reason="Never"/>
+    <disable_collisions link1="arm1_4_link" link2="lidar1_link" reason="Never"/>
+    <disable_collisions link1="arm1_4_link" link2="lidar2_link" reason="Never"/>
+    <disable_collisions link1="arm1_4_link" link2="steer1_link" reason="Never"/>
+    <disable_collisions link1="arm1_4_link" link2="steer2_link" reason="Never"/>
+    <disable_collisions link1="arm1_4_link" link2="steer3_link" reason="Never"/>
+    <disable_collisions link1="arm1_4_link" link2="walk1_link" reason="Never"/>
+    <disable_collisions link1="arm1_4_link" link2="walk2_link" reason="Never"/>
+    <disable_collisions link1="arm1_4_link" link2="walk3_link" reason="Never"/>
+    <disable_collisions link1="arm1_5_link" link2="arm1_6_link" reason="Adjacent"/>
+    <disable_collisions link1="arm1_5_link" link2="arm1_7_link" reason="Default"/>
+    <disable_collisions link1="arm1_5_link" link2="lidar2_link" reason="Never"/>
+    <disable_collisions link1="arm1_5_link" link2="steer3_link" reason="Never"/>
+    <disable_collisions link1="arm1_5_link" link2="walk2_link" reason="Never"/>
+    <disable_collisions link1="arm1_5_link" link2="walk3_link" reason="Never"/>
+    <disable_collisions link1="arm1_6_link" link2="arm1_7_link" reason="Adjacent"/>
+    <disable_collisions link1="arm1_6_link" link2="lidar2_link" reason="Never"/>
+    <disable_collisions link1="arm1_6_link" link2="steer3_link" reason="Never"/>
+    <disable_collisions link1="arm1_6_link" link2="walk2_link" reason="Never"/>
+    <disable_collisions link1="arm1_6_link" link2="walk3_link" reason="Never"/>
+    <disable_collisions link1="arm1_7_link" link2="steer3_link" reason="Never"/>
+    <disable_collisions link1="arm1_7_link" link2="walk3_link" reason="Never"/>
+    <disable_collisions link1="arm1_base_link" link2="arm2_1_link" reason="Never"/>
+    <disable_collisions link1="arm1_base_link" link2="arm2_2_link" reason="Never"/>
+    <disable_collisions link1="arm1_base_link" link2="arm2_3_link" reason="Never"/>
+    <disable_collisions link1="arm1_base_link" link2="arm2_4_link" reason="Never"/>
+    <disable_collisions link1="arm1_base_link" link2="arm2_base_link" reason="Never"/>
+    <disable_collisions link1="arm1_base_link" link2="base_link" reason="Default"/>
+    <disable_collisions link1="arm1_base_link" link2="head1_base_link" reason="Never"/>
+    <disable_collisions link1="arm1_base_link" link2="head1_pitch_link" reason="Never"/>
+    <disable_collisions link1="arm1_base_link" link2="head1_yaw_link" reason="Never"/>
+    <disable_collisions link1="arm1_base_link" link2="head_laser" reason="Never"/>
+    <disable_collisions link1="arm1_base_link" link2="lidar1_link" reason="Never"/>
+    <disable_collisions link1="arm1_base_link" link2="lidar2_link" reason="Never"/>
+    <disable_collisions link1="arm1_base_link" link2="lift1_link" reason="Never"/>
+    <disable_collisions link1="arm1_base_link" link2="steer1_link" reason="Never"/>
+    <disable_collisions link1="arm1_base_link" link2="steer2_link" reason="Never"/>
+    <disable_collisions link1="arm1_base_link" link2="steer3_link" reason="Never"/>
+    <disable_collisions link1="arm1_base_link" link2="waist1_link" reason="Adjacent"/>
+    <disable_collisions link1="arm1_base_link" link2="walk1_link" reason="Never"/>
+    <disable_collisions link1="arm1_base_link" link2="walk2_link" reason="Never"/>
+    <disable_collisions link1="arm1_base_link" link2="walk3_link" reason="Never"/>
+    <disable_collisions link1="arm2_1_link" link2="arm2_2_link" reason="Adjacent"/>
+    <disable_collisions link1="arm2_1_link" link2="arm2_3_link" reason="Never"/>
+    <disable_collisions link1="arm2_1_link" link2="arm2_4_link" reason="Never"/>
+    <disable_collisions link1="arm2_1_link" link2="arm2_5_link" reason="Never"/>
+    <disable_collisions link1="arm2_1_link" link2="arm2_6_link" reason="Never"/>
+    <disable_collisions link1="arm2_1_link" link2="arm2_base_link" reason="Adjacent"/>
+    <disable_collisions link1="arm2_1_link" link2="base_link" reason="Default"/>
+    <disable_collisions link1="arm2_1_link" link2="camera1_link" reason="Never"/>
+    <disable_collisions link1="arm2_1_link" link2="head1_base_link" reason="Never"/>
+    <disable_collisions link1="arm2_1_link" link2="head1_pitch_link" reason="Never"/>
+    <disable_collisions link1="arm2_1_link" link2="head1_yaw_link" reason="Never"/>
+    <disable_collisions link1="arm2_1_link" link2="head_laser" reason="Never"/>
+    <disable_collisions link1="arm2_1_link" link2="lidar1_link" reason="Never"/>
+    <disable_collisions link1="arm2_1_link" link2="lidar2_link" reason="Never"/>
+    <disable_collisions link1="arm2_1_link" link2="lift1_link" reason="Never"/>
+    <disable_collisions link1="arm2_1_link" link2="steer1_link" reason="Never"/>
+    <disable_collisions link1="arm2_1_link" link2="steer2_link" reason="Never"/>
+    <disable_collisions link1="arm2_1_link" link2="steer3_link" reason="Never"/>
+    <disable_collisions link1="arm2_1_link" link2="waist1_link" reason="Default"/>
+    <disable_collisions link1="arm2_1_link" link2="walk1_link" reason="Never"/>
+    <disable_collisions link1="arm2_1_link" link2="walk2_link" reason="Never"/>
+    <disable_collisions link1="arm2_1_link" link2="walk3_link" reason="Never"/>
+    <disable_collisions link1="arm2_2_link" link2="arm2_3_link" reason="Adjacent"/>
+    <disable_collisions link1="arm2_2_link" link2="arm2_4_link" reason="Never"/>
+    <disable_collisions link1="arm2_2_link" link2="arm2_6_link" reason="Never"/>
+    <disable_collisions link1="arm2_2_link" link2="arm2_7_link" reason="Never"/>
+    <disable_collisions link1="arm2_2_link" link2="base_link" reason="Default"/>
+    <disable_collisions link1="arm2_2_link" link2="head1_base_link" reason="Never"/>
+    <disable_collisions link1="arm2_2_link" link2="head1_pitch_link" reason="Never"/>
+    <disable_collisions link1="arm2_2_link" link2="head1_yaw_link" reason="Never"/>
+    <disable_collisions link1="arm2_2_link" link2="head_laser" reason="Never"/>
+    <disable_collisions link1="arm2_2_link" link2="lidar1_link" reason="Never"/>
+    <disable_collisions link1="arm2_2_link" link2="lidar2_link" reason="Never"/>
+    <disable_collisions link1="arm2_2_link" link2="lift1_link" reason="Never"/>
+    <disable_collisions link1="arm2_2_link" link2="steer1_link" reason="Never"/>
+    <disable_collisions link1="arm2_2_link" link2="steer2_link" reason="Never"/>
+    <disable_collisions link1="arm2_2_link" link2="steer3_link" reason="Never"/>
+    <disable_collisions link1="arm2_2_link" link2="walk1_link" reason="Never"/>
+    <disable_collisions link1="arm2_2_link" link2="walk2_link" reason="Never"/>
+    <disable_collisions link1="arm2_2_link" link2="walk3_link" reason="Never"/>
+    <disable_collisions link1="arm2_3_link" link2="arm2_4_link" reason="Adjacent"/>
+    <disable_collisions link1="arm2_3_link" link2="arm2_6_link" reason="Never"/>
+    <disable_collisions link1="arm2_3_link" link2="arm2_7_link" reason="Never"/>
+    <disable_collisions link1="arm2_3_link" link2="arm2_base_link" reason="Never"/>
+    <disable_collisions link1="arm2_3_link" link2="head1_base_link" reason="Never"/>
+    <disable_collisions link1="arm2_3_link" link2="lidar1_link" reason="Never"/>
+    <disable_collisions link1="arm2_3_link" link2="lidar2_link" reason="Never"/>
+    <disable_collisions link1="arm2_3_link" link2="steer1_link" reason="Never"/>
+    <disable_collisions link1="arm2_3_link" link2="steer2_link" reason="Never"/>
+    <disable_collisions link1="arm2_3_link" link2="steer3_link" reason="Never"/>
+    <disable_collisions link1="arm2_3_link" link2="walk1_link" reason="Never"/>
+    <disable_collisions link1="arm2_3_link" link2="walk2_link" reason="Never"/>
+    <disable_collisions link1="arm2_3_link" link2="walk3_link" reason="Never"/>
+    <disable_collisions link1="arm2_4_link" link2="arm2_5_link" reason="Adjacent"/>
+    <disable_collisions link1="arm2_4_link" link2="arm2_6_link" reason="Never"/>
+    <disable_collisions link1="arm2_4_link" link2="arm2_7_link" reason="Never"/>
+    <disable_collisions link1="arm2_4_link" link2="arm2_base_link" reason="Never"/>
+    <disable_collisions link1="arm2_4_link" link2="head1_base_link" reason="Never"/>
+    <disable_collisions link1="arm2_4_link" link2="lidar2_link" reason="Never"/>
+    <disable_collisions link1="arm2_4_link" link2="steer1_link" reason="Never"/>
+    <disable_collisions link1="arm2_4_link" link2="steer2_link" reason="Never"/>
+    <disable_collisions link1="arm2_4_link" link2="steer3_link" reason="Never"/>
+    <disable_collisions link1="arm2_4_link" link2="walk1_link" reason="Never"/>
+    <disable_collisions link1="arm2_4_link" link2="walk2_link" reason="Never"/>
+    <disable_collisions link1="arm2_4_link" link2="walk3_link" reason="Never"/>
+    <disable_collisions link1="arm2_5_link" link2="arm2_6_link" reason="Adjacent"/>
+    <disable_collisions link1="arm2_5_link" link2="arm2_7_link" reason="Default"/>
+    <disable_collisions link1="arm2_5_link" link2="lidar2_link" reason="Never"/>
+    <disable_collisions link1="arm2_5_link" link2="steer2_link" reason="Never"/>
+    <disable_collisions link1="arm2_5_link" link2="walk2_link" reason="Never"/>
+    <disable_collisions link1="arm2_5_link" link2="walk3_link" reason="Never"/>
+    <disable_collisions link1="arm2_6_link" link2="arm2_7_link" reason="Adjacent"/>
+    <disable_collisions link1="arm2_6_link" link2="lidar2_link" reason="Never"/>
+    <disable_collisions link1="arm2_6_link" link2="steer2_link" reason="Never"/>
+    <disable_collisions link1="arm2_6_link" link2="walk2_link" reason="Never"/>
+    <disable_collisions link1="arm2_6_link" link2="walk3_link" reason="Never"/>
+    <disable_collisions link1="arm2_7_link" link2="steer2_link" reason="Never"/>
+    <disable_collisions link1="arm2_7_link" link2="walk2_link" reason="Never"/>
+    <disable_collisions link1="arm2_7_link" link2="walk3_link" reason="Never"/>
+    <disable_collisions link1="arm2_base_link" link2="base_link" reason="Default"/>
+    <disable_collisions link1="arm2_base_link" link2="head1_base_link" reason="Never"/>
+    <disable_collisions link1="arm2_base_link" link2="head1_pitch_link" reason="Never"/>
+    <disable_collisions link1="arm2_base_link" link2="head1_yaw_link" reason="Never"/>
+    <disable_collisions link1="arm2_base_link" link2="head_laser" reason="Never"/>
+    <disable_collisions link1="arm2_base_link" link2="lidar1_link" reason="Never"/>
+    <disable_collisions link1="arm2_base_link" link2="lidar2_link" reason="Never"/>
+    <disable_collisions link1="arm2_base_link" link2="lift1_link" reason="Never"/>
+    <disable_collisions link1="arm2_base_link" link2="steer1_link" reason="Never"/>
+    <disable_collisions link1="arm2_base_link" link2="steer2_link" reason="Never"/>
+    <disable_collisions link1="arm2_base_link" link2="steer3_link" reason="Never"/>
+    <disable_collisions link1="arm2_base_link" link2="waist1_link" reason="Adjacent"/>
+    <disable_collisions link1="arm2_base_link" link2="walk1_link" reason="Never"/>
+    <disable_collisions link1="arm2_base_link" link2="walk2_link" reason="Never"/>
+    <disable_collisions link1="arm2_base_link" link2="walk3_link" reason="Never"/>
+    <disable_collisions link1="base_link" link2="camera1_link" reason="Default"/>
+    <disable_collisions link1="base_link" link2="head1_base_link" reason="Default"/>
+    <disable_collisions link1="base_link" link2="head1_pitch_link" reason="Default"/>
+    <disable_collisions link1="base_link" link2="head1_yaw_link" reason="Default"/>
+    <disable_collisions link1="base_link" link2="head_laser" reason="Adjacent"/>
+    <disable_collisions link1="base_link" link2="lidar1_link" reason="Adjacent"/>
+    <disable_collisions link1="base_link" link2="lidar2_link" reason="Adjacent"/>
+    <disable_collisions link1="base_link" link2="lift1_link" reason="Adjacent"/>
+    <disable_collisions link1="base_link" link2="steer1_link" reason="Adjacent"/>
+    <disable_collisions link1="base_link" link2="steer2_link" reason="Adjacent"/>
+    <disable_collisions link1="base_link" link2="steer3_link" reason="Adjacent"/>
+    <disable_collisions link1="base_link" link2="waist1_link" reason="Default"/>
+    <disable_collisions link1="base_link" link2="walk1_link" reason="Default"/>
+    <disable_collisions link1="base_link" link2="walk2_link" reason="Default"/>
+    <disable_collisions link1="base_link" link2="walk3_link" reason="Default"/>
+    <disable_collisions link1="camera1_link" link2="head1_pitch_link" reason="Adjacent"/>
+    <disable_collisions link1="camera1_link" link2="head_laser" reason="Never"/>
+    <disable_collisions link1="camera1_link" link2="lidar1_link" reason="Never"/>
+    <disable_collisions link1="camera1_link" link2="lidar2_link" reason="Never"/>
+    <disable_collisions link1="camera1_link" link2="lift1_link" reason="Never"/>
+    <disable_collisions link1="camera1_link" link2="steer1_link" reason="Never"/>
+    <disable_collisions link1="camera1_link" link2="steer2_link" reason="Never"/>
+    <disable_collisions link1="camera1_link" link2="steer3_link" reason="Never"/>
+    <disable_collisions link1="camera1_link" link2="waist1_link" reason="Default"/>
+    <disable_collisions link1="camera1_link" link2="walk1_link" reason="Never"/>
+    <disable_collisions link1="camera1_link" link2="walk2_link" reason="Never"/>
+    <disable_collisions link1="camera1_link" link2="walk3_link" reason="Never"/>
+    <disable_collisions link1="head1_base_link" link2="head1_yaw_link" reason="Adjacent"/>
+    <disable_collisions link1="head1_base_link" link2="head_laser" reason="Never"/>
+    <disable_collisions link1="head1_base_link" link2="lidar1_link" reason="Never"/>
+    <disable_collisions link1="head1_base_link" link2="lidar2_link" reason="Never"/>
+    <disable_collisions link1="head1_base_link" link2="lift1_link" reason="Never"/>
+    <disable_collisions link1="head1_base_link" link2="steer1_link" reason="Never"/>
+    <disable_collisions link1="head1_base_link" link2="steer2_link" reason="Never"/>
+    <disable_collisions link1="head1_base_link" link2="steer3_link" reason="Never"/>
+    <disable_collisions link1="head1_base_link" link2="waist1_link" reason="Adjacent"/>
+    <disable_collisions link1="head1_base_link" link2="walk1_link" reason="Never"/>
+    <disable_collisions link1="head1_base_link" link2="walk2_link" reason="Never"/>
+    <disable_collisions link1="head1_base_link" link2="walk3_link" reason="Never"/>
+    <disable_collisions link1="head1_pitch_link" link2="head1_yaw_link" reason="Adjacent"/>
+    <disable_collisions link1="head1_pitch_link" link2="head_laser" reason="Never"/>
+    <disable_collisions link1="head1_pitch_link" link2="lidar1_link" reason="Never"/>
+    <disable_collisions link1="head1_pitch_link" link2="lidar2_link" reason="Never"/>
+    <disable_collisions link1="head1_pitch_link" link2="lift1_link" reason="Never"/>
+    <disable_collisions link1="head1_pitch_link" link2="steer1_link" reason="Never"/>
+    <disable_collisions link1="head1_pitch_link" link2="steer2_link" reason="Never"/>
+    <disable_collisions link1="head1_pitch_link" link2="steer3_link" reason="Never"/>
+    <disable_collisions link1="head1_pitch_link" link2="waist1_link" reason="Default"/>
+    <disable_collisions link1="head1_pitch_link" link2="walk1_link" reason="Never"/>
+    <disable_collisions link1="head1_pitch_link" link2="walk2_link" reason="Never"/>
+    <disable_collisions link1="head1_pitch_link" link2="walk3_link" reason="Never"/>
+    <disable_collisions link1="head1_yaw_link" link2="head_laser" reason="Never"/>
+    <disable_collisions link1="head1_yaw_link" link2="lidar1_link" reason="Never"/>
+    <disable_collisions link1="head1_yaw_link" link2="lidar2_link" reason="Never"/>
+    <disable_collisions link1="head1_yaw_link" link2="lift1_link" reason="Never"/>
+    <disable_collisions link1="head1_yaw_link" link2="steer1_link" reason="Never"/>
+    <disable_collisions link1="head1_yaw_link" link2="steer2_link" reason="Never"/>
+    <disable_collisions link1="head1_yaw_link" link2="steer3_link" reason="Never"/>
+    <disable_collisions link1="head1_yaw_link" link2="waist1_link" reason="Default"/>
+    <disable_collisions link1="head1_yaw_link" link2="walk1_link" reason="Never"/>
+    <disable_collisions link1="head1_yaw_link" link2="walk2_link" reason="Never"/>
+    <disable_collisions link1="head1_yaw_link" link2="walk3_link" reason="Never"/>
+    <disable_collisions link1="head_laser" link2="lidar1_link" reason="Never"/>
+    <disable_collisions link1="head_laser" link2="lidar2_link" reason="Never"/>
+    <disable_collisions link1="head_laser" link2="lift1_link" reason="Never"/>
+    <disable_collisions link1="head_laser" link2="steer1_link" reason="Never"/>
+    <disable_collisions link1="head_laser" link2="steer2_link" reason="Never"/>
+    <disable_collisions link1="head_laser" link2="steer3_link" reason="Never"/>
+    <disable_collisions link1="head_laser" link2="waist1_link" reason="Never"/>
+    <disable_collisions link1="head_laser" link2="walk1_link" reason="Never"/>
+    <disable_collisions link1="head_laser" link2="walk2_link" reason="Never"/>
+    <disable_collisions link1="head_laser" link2="walk3_link" reason="Never"/>
+    <disable_collisions link1="lidar1_link" link2="lidar2_link" reason="Never"/>
+    <disable_collisions link1="lidar1_link" link2="lift1_link" reason="Never"/>
+    <disable_collisions link1="lidar1_link" link2="steer1_link" reason="Default"/>
+    <disable_collisions link1="lidar1_link" link2="steer2_link" reason="Never"/>
+    <disable_collisions link1="lidar1_link" link2="steer3_link" reason="Never"/>
+    <disable_collisions link1="lidar1_link" link2="waist1_link" reason="Never"/>
+    <disable_collisions link1="lidar1_link" link2="walk1_link" reason="Never"/>
+    <disable_collisions link1="lidar1_link" link2="walk2_link" reason="Never"/>
+    <disable_collisions link1="lidar1_link" link2="walk3_link" reason="Never"/>
+    <disable_collisions link1="lidar2_link" link2="lift1_link" reason="Never"/>
+    <disable_collisions link1="lidar2_link" link2="steer1_link" reason="Never"/>
+    <disable_collisions link1="lidar2_link" link2="steer2_link" reason="Never"/>
+    <disable_collisions link1="lidar2_link" link2="steer3_link" reason="Never"/>
+    <disable_collisions link1="lidar2_link" link2="waist1_link" reason="Never"/>
+    <disable_collisions link1="lidar2_link" link2="walk1_link" reason="Never"/>
+    <disable_collisions link1="lidar2_link" link2="walk2_link" reason="Never"/>
+    <disable_collisions link1="lidar2_link" link2="walk3_link" reason="Never"/>
+    <disable_collisions link1="lift1_link" link2="steer1_link" reason="Never"/>
+    <disable_collisions link1="lift1_link" link2="steer2_link" reason="Never"/>
+    <disable_collisions link1="lift1_link" link2="steer3_link" reason="Never"/>
+    <disable_collisions link1="lift1_link" link2="waist1_link" reason="Adjacent"/>
+    <disable_collisions link1="lift1_link" link2="walk1_link" reason="Never"/>
+    <disable_collisions link1="lift1_link" link2="walk2_link" reason="Never"/>
+    <disable_collisions link1="lift1_link" link2="walk3_link" reason="Never"/>
+    <disable_collisions link1="steer1_link" link2="steer2_link" reason="Never"/>
+    <disable_collisions link1="steer1_link" link2="steer3_link" reason="Never"/>
+    <disable_collisions link1="steer1_link" link2="walk1_link" reason="Adjacent"/>
+    <disable_collisions link1="steer1_link" link2="walk2_link" reason="Never"/>
+    <disable_collisions link1="steer1_link" link2="walk3_link" reason="Never"/>
+    <disable_collisions link1="steer2_link" link2="steer3_link" reason="Never"/>
+    <disable_collisions link1="steer2_link" link2="waist1_link" reason="Never"/>
+    <disable_collisions link1="steer2_link" link2="walk1_link" reason="Never"/>
+    <disable_collisions link1="steer2_link" link2="walk2_link" reason="Adjacent"/>
+    <disable_collisions link1="steer2_link" link2="walk3_link" reason="Never"/>
+    <disable_collisions link1="steer3_link" link2="waist1_link" reason="Never"/>
+    <disable_collisions link1="steer3_link" link2="walk1_link" reason="Never"/>
+    <disable_collisions link1="steer3_link" link2="walk2_link" reason="Never"/>
+    <disable_collisions link1="steer3_link" link2="walk3_link" reason="Adjacent"/>
+    <disable_collisions link1="waist1_link" link2="walk1_link" reason="Never"/>
+    <disable_collisions link1="waist1_link" link2="walk2_link" reason="Never"/>
+    <disable_collisions link1="waist1_link" link2="walk3_link" reason="Never"/>
+    <disable_collisions link1="walk1_link" link2="walk2_link" reason="Never"/>
+    <disable_collisions link1="walk1_link" link2="walk3_link" reason="Never"/>
+    <disable_collisions link1="walk2_link" link2="walk3_link" reason="Never"/>
+
+    <!-- Минимальные planning groups для MoveIt -->
+    <group name="right_arm">
+        <joint name="arm_right_1"/>
+        <joint name="arm_right_2"/>
+        <joint name="arm_right_3"/>
+        <joint name="arm_right_4"/>
+        <joint name="arm_right_5"/>
+        <joint name="arm_right_6"/>
+        <joint name="arm_right_7"/>
+    </group>
+    <group name="left_arm">
+        <joint name="arm_left_1"/>
+        <joint name="arm_left_2"/>
+        <joint name="arm_left_3"/>
+        <joint name="arm_left_4"/>
+        <joint name="arm_left_5"/>
+        <joint name="arm_left_6"/>
+        <joint name="arm_left_7"/>
+    </group>
+
+    <group_state name="home" group="right_arm">
+        <joint name="arm_right_1" value="0.0"/>
+        <joint name="arm_right_2" value="0.0"/>
+        <joint name="arm_right_3" value="0.0"/>
+        <joint name="arm_right_4" value="0.0"/>
+        <joint name="arm_right_5" value="0.0"/>
+        <joint name="arm_right_6" value="0.0"/>
+        <joint name="arm_right_7" value="0.0"/>
+    </group_state>
+    <group_state name="home" group="left_arm">
+        <joint name="arm_left_1" value="0.0"/>
+        <joint name="arm_left_2" value="0.0"/>
+        <joint name="arm_left_3" value="0.0"/>
+        <joint name="arm_left_4" value="0.0"/>
+        <joint name="arm_left_5" value="0.0"/>
+        <joint name="arm_left_6" value="0.0"/>
+        <joint name="arm_left_7" value="0.0"/>
+    </group_state>
+</robot>
