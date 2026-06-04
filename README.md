@@ -30,6 +30,7 @@ source .venv/bin/activate
 ## Структура
 
 - `arm_planning_tcp.py` — универсальный клиент `ArmPlanning` (one-shot вызовы + класс `ArmPlanningClient`)
+- `evaluation/collision_guard.py` — локальная проверка self-collision (PyBullet + URDF/SRDF) для `teleop_arm.py`
 - `teleop_arm.py` — телеоперация суставов рук (MoveJ), поддержка правой/левой, переключение `t`
 - `teleop_gripper.py` — телеоперация гриппера (`GripManager.sendControl`)
 - `teleop_arrows.py` — телеоперация шасси стрелками (`Tracking.manual`)
@@ -134,6 +135,8 @@ python3 teleop_arm.py --ip 192.168.192.7 --self-collision-check
 
 #### Self-Collision в `teleop_arm.py`
 
+Логика проверки вынесена в `evaluation/collision_guard.py` (`SelfCollisionGuard`).
+
 Проверка работает локально через `pybullet` перед отправкой шага в `ArmPlanning`:
 - берётся геометрия и кинематика из `URDF`
 - пары исключений берутся из `SRDF` (`disable_collisions`)
@@ -146,7 +149,7 @@ python3 teleop_arm.py --ip 192.168.192.7 --self-collision-check
 
 ```bash
 source .venv/bin/activate
-pip install pybullet
+pip install -r requirements.txt
 ```
 
 Что делает флаг `--self-collision-check`:

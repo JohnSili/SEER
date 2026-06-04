@@ -47,12 +47,15 @@ from __future__ import annotations
 
 import argparse
 import math
-import os
 import sys
-import tempfile
 import time
-import xml.etree.ElementTree as ET
 from pathlib import Path
+
+from evaluation.collision_guard import (
+    SelfCollisionGuard,
+    parse_csv_names,
+    parse_ignore_pairs,
+)
 
 try:
     import curses
@@ -60,10 +63,6 @@ except ImportError:
     print("Нужен curses (Linux / TTY).", file=sys.stderr)
     sys.exit(1)
 
-try:
-    import pybullet as pb
-except ImportError:
-    pb = None
 
 from arm_planning_tcp import ArmPlanningClient, status_from_response
 
@@ -207,340 +206,6 @@ def _rpy_to_quat_xyzw(rpy: list[float]) -> list[float]:
     qz = cr * cp * sy - sr * sp * cy
     qw = cr * cp * cy + sr * sp * sy
     return _normalize_quat_xyzw([qx, qy, qz, qw])
-
-
-def _parse_csv_names(s: str) -> list[str]:
-    return [x.strip() for x in s.split(",") if x.strip()]
-
-
-def _parse_ignore_pairs(s: str) -> set[frozenset[str]]:
-    """
-    CSV список пар вида 'linkA:linkB,linkC:linkD'.
-    Используется как доп. фильтр поверх SRDF для локальных ложных срабатываний.
-    """
-    out: set[frozenset[str]] = set()
-    for tok in s.split(","):
-        item = tok.strip()
-        if not item:
-            continue
-        if ":" not in item:
-            raise ValueError(f"Некорректная пара '{item}', ожидается формат linkA:linkB")
-        a, b = (x.strip() for x in item.split(":", 1))
-        if not a or not b or a == b:
-            raise ValueError(f"Некорректная пара '{item}'")
-        out.add(frozenset((a, b)))
-    return out
-
-
-def _is_arm_link(name: str) -> bool:
-    """Звенья манипуляторов в SRDF/URDF: arm1_* (правая), arm2_* (левая)."""
-    return name.startswith("arm1_") or name.startswith("arm2_")
-
-
-def _is_arm_mount_link(name: str) -> bool:
-    """Базовые звенья крепления руки к корпусу (часто конструктивно пересекаются)."""
-    return name in ("arm1_base_link", "arm2_base_link")
-
-
-def _resolve_mesh_share_root(urdf_path: Path, override: Path | None) -> Path | None:
-    """
-    Корень модели/пакета с mesh-ресурсами.
-
-    Нужен для:
-    - package://simulation_rvis/...
-    - package://wheeled_humanoid_v3_2/...
-    - относительных STL в urdf_seer/robot_view.urdf (через meshes_bin / meshes / meshes_obj)
-    """
-    if override is not None:
-        o = override.resolve()
-        if not any((o / sub).is_dir() for sub in ("meshes", "meshes_bin", "meshes_obj")):
-            raise RuntimeError(
-                f"--collision-mesh-share: в {o} нет ни meshes/, ни meshes_bin/, ни meshes_obj/"
-            )
-        return o
-    u = urdf_path.resolve()
-    if u.parent.name == "urdf" and u.parent.parent.name == "simulation_rvis":
-        share = u.parent.parent
-        if (share / "meshes").is_dir():
-            return share
-        for anc in u.parents:
-            cand = anc / "install" / "simulation_rvis" / "share" / "simulation_rvis"
-            if (cand / "meshes").is_dir():
-                return cand
-    if u.parent.name == "urdf":
-        share = u.parent.parent
-        if any((share / sub).is_dir() for sub in ("meshes", "meshes_bin", "meshes_obj")):
-            return share
-    return None
-
-
-def _urdf_with_resolved_meshes(urdf_path: Path, mesh_share: Path | None) -> tuple[Path, Path | None]:
-    """
-    Пишет временный URDF с абсолютными путями к mesh для PyBullet.
-
-    Поддерживает:
-    - package://simulation_rvis/...
-    - package://wheeled_humanoid_v3_2/...
-    - относительные mesh filename из urdf_seer/robot_view.urdf
-    - вырезает <!DOCTYPE ...> и правит version="1.0.0" -> "1.0"
-
-    Возвращает (путь для loadURDF, путь к temp-файлу для unlink или None).
-    """
-    text = urdf_path.read_text(encoding="utf-8")
-    if "<!DOCTYPE" in text:
-        text = "\n".join(
-            line for line in text.splitlines() if not line.lstrip().startswith("<!DOCTYPE")
-        )
-
-    xml_root = ET.fromstring(text)
-    if xml_root.get("version") == "1.0.0":
-        xml_root.set("version", "1.0")
-
-    meshdir_dirs: list[Path] = []
-    mujoco_compiler = xml_root.find("./mujoco/compiler")
-    if mujoco_compiler is not None:
-        meshdir = (mujoco_compiler.get("meshdir") or "").strip()
-        if meshdir:
-            cand = (urdf_path.parent / meshdir).resolve()
-            if cand.is_dir():
-                meshdir_dirs.append(cand)
-    for mj in list(xml_root.findall("mujoco")):
-        xml_root.remove(mj)
-
-    search_dirs: list[Path] = []
-    if mesh_share is not None:
-        share = mesh_share.resolve()
-        search_dirs.append(share)
-        for sub in ("meshes", "meshes_bin", "meshes_obj"):
-            p = share / sub
-            if p.is_dir():
-                search_dirs.append(p)
-    search_dirs.extend(meshdir_dirs)
-    search_dirs.append(urdf_path.parent.resolve())
-
-    changed = False
-    for mesh in xml_root.findall(".//mesh"):
-        filename = (mesh.get("filename") or "").strip()
-        if not filename:
-            continue
-        resolved: Path | None = None
-        if filename.startswith("package://simulation_rvis/"):
-            rel = filename.removeprefix("package://simulation_rvis/").lstrip("/")
-            if mesh_share is not None:
-                resolved = (mesh_share / rel).resolve()
-        elif filename.startswith("package://wheeled_humanoid_v3_2/"):
-            rel = filename.removeprefix("package://wheeled_humanoid_v3_2/").lstrip("/")
-            if mesh_share is not None:
-                resolved = (mesh_share / rel).resolve()
-        elif filename.startswith("file://"):
-            resolved = Path(filename[7:]).resolve()
-        elif filename.startswith("/"):
-            resolved = Path(filename).resolve()
-        else:
-            for d in search_dirs:
-                cand = (d / filename).resolve()
-                if cand.is_file():
-                    resolved = cand
-                    break
-        if resolved is None or not resolved.is_file():
-            raise RuntimeError(f"Не удалось найти mesh '{filename}' для URDF {urdf_path}")
-        new_filename = str(resolved)
-        if new_filename != filename:
-            mesh.set("filename", new_filename)
-            changed = True
-
-    normalized = ET.tostring(xml_root, encoding="unicode")
-    if not changed and normalized == text:
-        return urdf_path, None
-
-    fd, tmp_name = tempfile.mkstemp(prefix="teleop_arm_", suffix=".urdf", text=True)
-    try:
-        with os.fdopen(fd, "w", encoding="utf-8") as f:
-            f.write(normalized)
-    except Exception:
-        try:
-            os.unlink(tmp_name)
-        except OSError:
-            pass
-        raise
-    return Path(tmp_name), Path(tmp_name)
-
-
-def _load_disabled_pairs_from_srdf(
-    path: Path,
-    *,
-    include_default_arm_pairs: bool = False,
-) -> set[frozenset[str]]:
-    """
-    Пары из SRDF, между которыми не считаем коллизию.
-
-    В MoveIt Setup Assistant многие пары рука↔корпус помечены reason=\"Default\"
-    (выборка конфигураций). Для телеопа это даёт ложные «ОК»: рука бьётся о корпус,
-    а фильтр эту пару отбрасывает. По умолчанию для arm*↔base_link такие Default-пары
-    не кладём в disabled (строгая проверка удара в нижний «кирпич» корпуса).
-
-    Пары arm*↔waist1_link и arm*↔arm* с Default в SRDF снова отключаем: иначе грубые
-    collision-боксы дают постоянный blocked (ложное проникновение у плеча).
-
-    Полное совпадение со всеми Default из SRDF — флаг --collision-srdf-include-default-arm.
-    """
-    pairs: set[frozenset[str]] = set()
-    root = ET.parse(path).getroot()
-    for x in root.findall(".//disable_collisions"):
-        a = x.attrib.get("link1")
-        b = x.attrib.get("link2")
-        reason = (x.attrib.get("reason") or "").strip()
-        if not a or not b or a == b:
-            continue
-        if reason == "Default" and not include_default_arm_pairs:
-            # Игнор монтажа base_link <-> arm*_base_link всегда из SRDF (см. цикл ниже).
-            if (_is_arm_link(a) or _is_arm_link(b)) and not (
-                (a == "base_link" and _is_arm_mount_link(b))
-                or (b == "base_link" and _is_arm_mount_link(a))
-            ):
-                if _is_arm_link(a) and _is_arm_link(b):
-                    pairs.add(frozenset((a, b)))
-                    continue
-                non_arm = b if _is_arm_link(a) else a
-                if non_arm == "base_link":
-                    continue
-                pairs.add(frozenset((a, b)))
-                continue
-        pairs.add(frozenset((a, b)))
-    return pairs
-
-
-class SelfCollisionGuard:
-    """
-    Локальный self-collision check через pybullet:
-    - URDF задаёт геометрию/кинематику (collision из URDF)
-    - SRDF даёт пары, которые надо игнорировать
-
-    PyBullet по умолчанию отключает self-collision для одного multibody; для loadURDF
-    нужны флаги URDF_USE_SELF_COLLISION (иначе getClosestPoints(robot, robot) пустой).
-    """
-
-    def __init__(
-        self,
-        urdf_path: Path,
-        srdf_path: Path,
-        right_joint_names: list[str],
-        left_joint_names: list[str],
-        collision_distance: float = 0.0,
-        include_default_arm_pairs: bool = False,
-        extra_ignored_pairs: set[frozenset[str]] | None = None,
-        mesh_share_root: Path | None = None,
-    ) -> None:
-        if pb is None:
-            raise RuntimeError("pybullet не установлен (pip install pybullet)")
-        if not urdf_path.exists():
-            raise RuntimeError(f"URDF не найден: {urdf_path}")
-        if not srdf_path.exists():
-            raise RuntimeError(f"SRDF не найден: {srdf_path}")
-
-        self._urdf_temp: Path | None = None
-        load_path = urdf_path
-        share = _resolve_mesh_share_root(urdf_path, mesh_share_root)
-        urdf_text = urdf_path.read_text(encoding="utf-8")
-        needs_rewrite = (
-            share is not None
-            or "package://simulation_rvis/" in urdf_text
-            or "package://wheeled_humanoid_v3_2/" in urdf_text
-            or "<!DOCTYPE" in urdf_text
-            or "<mujoco>" in urdf_text
-        )
-        if share is not None or needs_rewrite:
-            load_path, self._urdf_temp = _urdf_with_resolved_meshes(urdf_path, share)
-        elif "package://" in urdf_text:
-            raise RuntimeError(
-                "В URDF есть package://..., а каталог mesh-ресурсов не найден. "
-                "Укажи --collision-mesh-share путь к корню модели/пакета "
-                "(где лежат meshes/, meshes_bin/ или meshes_obj/)."
-            )
-
-        self.client_id = pb.connect(pb.DIRECT)
-        urdf_flags = pb.URDF_USE_SELF_COLLISION | pb.URDF_USE_SELF_COLLISION_EXCLUDE_PARENT
-        self.robot_id = pb.loadURDF(
-            str(load_path),
-            useFixedBase=True,
-            physicsClientId=self.client_id,
-            flags=urdf_flags,
-        )
-        self.disabled_pairs = _load_disabled_pairs_from_srdf(
-            srdf_path,
-            include_default_arm_pairs=include_default_arm_pairs,
-        )
-        if extra_ignored_pairs:
-            self.disabled_pairs |= set(extra_ignored_pairs)
-        self.collision_distance = float(max(0.0, collision_distance))
-
-        self.joint_name_to_idx: dict[str, int] = {}
-        self.link_idx_to_name: dict[int, str] = {}
-
-        body_info = pb.getBodyInfo(self.robot_id, physicsClientId=self.client_id)
-        base_name = body_info[0].decode(errors="ignore") if body_info and body_info[0] else "base_link"
-        self.link_idx_to_name[-1] = base_name
-
-        n = pb.getNumJoints(self.robot_id, physicsClientId=self.client_id)
-        for i in range(n):
-            ji = pb.getJointInfo(self.robot_id, i, physicsClientId=self.client_id)
-            jn = ji[1].decode(errors="ignore")
-            ln = ji[12].decode(errors="ignore")
-            self.joint_name_to_idx[jn] = i
-            self.link_idx_to_name[i] = ln
-
-        self.right_idxs = [self._joint_idx_or_fail(name) for name in right_joint_names]
-        self.left_idxs = [self._joint_idx_or_fail(name) for name in left_joint_names]
-
-    def _joint_idx_or_fail(self, name: str) -> int:
-        if name not in self.joint_name_to_idx:
-            raise RuntimeError(f"Joint '{name}' не найден в URDF")
-        return self.joint_name_to_idx[name]
-
-    def close(self) -> None:
-        if self.client_id >= 0:
-            pb.disconnect(physicsClientId=self.client_id)
-            self.client_id = -1
-        if self._urdf_temp is not None:
-            try:
-                self._urdf_temp.unlink(missing_ok=True)
-            except OSError:
-                pass
-            self._urdf_temp = None
-
-    def _apply_arm_state(self, idxs: list[int], q: list[float]) -> None:
-        if len(q) != len(idxs):
-            raise RuntimeError(f"Длина q={len(q)} не совпадает с joint list={len(idxs)}")
-        for i, val in zip(idxs, q):
-            pb.resetJointState(self.robot_id, i, float(val), physicsClientId=self.client_id)
-
-    def set_joint_state(self, joint_name: str, value: float) -> None:
-        """Устанавливает состояние произвольного сустава URDF перед check()."""
-        idx = self._joint_idx_or_fail(joint_name)
-        pb.resetJointState(self.robot_id, idx, float(value), physicsClientId=self.client_id)
-
-    def check(self, q_right: list[float], q_left: list[float]) -> tuple[bool, str]:
-        self._apply_arm_state(self.right_idxs, q_right)
-        self._apply_arm_state(self.left_idxs, q_left)
-        cps = pb.getClosestPoints(
-            self.robot_id,
-            self.robot_id,
-            distance=self.collision_distance,
-            physicsClientId=self.client_id,
-        )
-        for cp in cps:
-            a_idx = int(cp[3])  # linkIndexA
-            b_idx = int(cp[4])  # linkIndexB
-            if a_idx == b_idx:
-                continue
-            a = self.link_idx_to_name.get(a_idx, str(a_idx))
-            b = self.link_idx_to_name.get(b_idx, str(b_idx))
-            if frozenset((a, b)) in self.disabled_pairs:
-                continue
-            dist = float(cp[8])  # negative => penetration
-            if dist <= self.collision_distance:
-                return True, f"{a} <-> {b} (dist={dist:.4f})"
-        return False, ""
 
 
 def run(
@@ -967,11 +632,11 @@ def main() -> None:
             guard = SelfCollisionGuard(
                 urdf_path=Path(args.collision_urdf),
                 srdf_path=Path(args.collision_srdf),
-                right_joint_names=_parse_csv_names(args.right_joint_names),
-                left_joint_names=_parse_csv_names(args.left_joint_names),
+                right_joint_names=parse_csv_names(args.right_joint_names),
+                left_joint_names=parse_csv_names(args.left_joint_names),
                 collision_distance=args.collision_distance,
                 include_default_arm_pairs=args.collision_srdf_include_default_arm,
-                extra_ignored_pairs=_parse_ignore_pairs(args.collision_ignore_pairs),
+                extra_ignored_pairs=parse_ignore_pairs(args.collision_ignore_pairs),
                 mesh_share_root=mesh_override,
             )
             print(

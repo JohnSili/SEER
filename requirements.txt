@@ -1,0 +1,2 @@
+# Optional: teleop_arm.py --self-collision-check (PyBullet + URDF/SRDF)
+pybullet>=3.2,<4
